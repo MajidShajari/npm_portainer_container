@@ -1,0 +1,5 @@
+.env
+data/
+letsencrypt/
+postgres_data/
+portainer_data/

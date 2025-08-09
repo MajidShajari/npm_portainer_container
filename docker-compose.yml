@@ -1,0 +1,64 @@
+version: '3.9'
+
+networks:
+    nginx_proxy:
+        name: npm_net
+
+volumes:
+    portainer_data:
+        name: portainer_data
+    postgres_data:
+
+services:
+    app:
+        image: jc21/nginx-proxy-manager:2.12.6
+        container_name: NginxProxyManager
+        restart: always
+        ports:
+            - '80:80'
+            - '443:443'
+            - '81:81'
+        environment:
+            DB_POSTGRES_HOST: db
+            DB_POSTGRES_PORT: 5432
+            DB_POSTGRES_USER: ${DB_USER}
+            DB_POSTGRES_PASSWORD: ${DB_PASSWORD}
+            DB_POSTGRES_NAME: ${DB_NAME}
+        volumes:
+            - ./data:/data
+            - ./letsencrypt:/etc/letsencrypt
+        depends_on:
+            db:
+                condition: service_healthy
+        networks:
+            - nginx_proxy
+
+    db:
+        image: postgres:17.5
+        container_name: NPM_PostgreSQL
+        restart: always
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U ${DB_USER}']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - nginx_proxy
+
+    portainer:
+        image: portainer/portainer-ce:2.19.4
+        container_name: Portainer
+        restart: always
+        networks:
+            - nginx_proxy
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - portainer_data:/data
+        expose:
+            - '9000' # فقط داخل شبکه، نه بیرون
