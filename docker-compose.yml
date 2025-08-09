@@ -1,5 +1,3 @@
-version: '3.9'
-
 networks:
     nginx_proxy:
         name: npm_net
