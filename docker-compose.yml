@@ -1,12 +1,3 @@
-networks:
-    nginx_proxy:
-        name: npm_net
-
-volumes:
-    portainer_data:
-        name: portainer_data
-    postgres_data:
-
 services:
     app:
         image: jc21/nginx-proxy-manager:2.12.6
@@ -59,4 +50,13 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - portainer_data:/data
         expose:
-            - '9000' # فقط داخل شبکه، نه بیرون
+            - '9000' # Portainer UI
+networks:
+    nginx_proxy:
+        name: npm_net
+
+volumes:
+    portainer_data:
+        name: portainer_data
+    postgres_data:
+        name: postgres_data
