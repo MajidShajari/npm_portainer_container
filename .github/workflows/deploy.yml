@@ -21,7 +21,7 @@ jobs:
                   username: ${{ secrets.SSH_USER }}
                   key: ${{ secrets.SSH_KEY }}
                   script: |
-                      cd ~/programming/docker_container/
+                      cd ~/programming/docker_container/npm_portainer_container
                       git pull origin main
-                      docker compose pull
-                      docker compose up -d
+                  #   docker compose pull
+                  #   docker compose up -d
